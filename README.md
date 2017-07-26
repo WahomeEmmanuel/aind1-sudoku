@@ -3,11 +3,20 @@
 
 # Question 1 (Naked Twins)
 Q: How do we use constraint propagation to solve the naked twins problem?  
-A: *Student should provide answer here*
+A: By removing the two candidate numbers from its peers. It's a good way of improving the efficiency of the algorithm: initially we use constraint propagation assigning the one possible value to the box that only can have that value (a big constraint), and consequently removing that value from its peers. Eventually instead of roughly search, we can find the naked-twins values and do the same. Obviously a search strategy has a great cost in terms of performance, however we can reduce the puzzle and improve the efficiency if we find more constraints as find the boxes with the same two digits, this way we can reduce the number of iterations.   
 
 # Question 2 (Diagonal Sudoku)
 Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
-A: *Student should provide answer here*
+A: Well, making the unitlist bigger by adding the diagonal we are increasing the number of peers to check, that means more restrictions, so more constraint. Initally we had 27 units, after considering the diagonal we have 29, so the peers for those boxes on the path diagonal increase from 20 (not considering the diagonal) to 26. 
+
+Example: 
+
+Number of peers of A1 (in diagonal):  26
+Number of peers of B1 (not in diagonal):  20
+Number of peers of D4 (in diagonal):  26
+
+It could seem that we as our list is bigger and we have more boxes to check for peers, the performance might be slow, but it is not, as we are drammatically reducing the number of possibilities for each box, and so improving the performance of the algorithm. 
+
 
 ### Install
 
