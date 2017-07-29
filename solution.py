@@ -86,7 +86,32 @@ def assign_value(values, box, value):
 
 
     except Exception as err:
-        logger.error("assign_value(): Fatal error running tests")   
+        logger.error("assign_value(): Fatal error assigning value")   
+
+
+
+def find_twins(values): 
+    """Eliminate values using the naked twins strategy.
+    Args:
+        values(dict): a dictionary of the form {'box_name': '123456789', ...}
+
+    Returns:
+        naked_twins (list): a list of lists containing each pair of naked twins. Example [[A1, B1], [D4, E5], [H4, C4]]
+    """
+
+    try: 
+
+        # Create a list of boxes with the boxes with two values (candidates for naked twins)
+        _twins = [box for box in values.keys() if len(values[box]) == 2]
+
+        # Find the naked twins and create a list of lists
+        naked_twins_list = [[box1, box2] for box1 in _twins for box2 in peers[box1] if set(values[box1]) == set(values[box2])]
+
+        return naked_twins_list
+    
+    except Exception as err:
+        logger.error("find_twins(): Fatal error finding twins")      
+
 
 def naked_twins(values):
     """Eliminate values using the naked twins strategy.
@@ -98,24 +123,26 @@ def naked_twins(values):
     """
 
     # Find all instances of naked twins
+
+    naked_twins = find_twins(values)
+
+
     # Eliminate the naked twins as possibilities for their peers
 
-    # Find boxes with 2 candidates 
-    _twins = [box for box in values.keys() if len(values[box]) == 2]
-
-    # Find the naked twins and create a list of lists
-    naked_twins = [[box1, box2] for box1 in _twins for box2 in peers[box1] if set(values[box1]) == set(values[box2])]
-    
+   
     for i in range(len(naked_twins)):
-        box1 = naked_twins[i][0]
-        box2 = naked_twins[i][1]
+        box1 = naked_twins[i][0]  # From the previous example : box1 = naked_twins[0][0] --> A1
+        box2 = naked_twins[i][1]  # From the previous example : box1 = naked_twins[0][0] --> B1
         
         # Find peers for first and second twins
-        peers1 = set(peers[box1])
-        peers2 = set(peers[box2])
+        peers1 = set(peers[box1]) # Build a set (inmutable objects) of peers for A1
+        peers2 = set(peers[box2]) # Build a set of peers for B1
 
         # Join the two sets 
         common_peers = peers1 & peers2
+
+        
+
         
         # Remove the naked twins as candidates from the common peers
         for peer in common_peers:
@@ -168,6 +195,9 @@ def display(values):
 
 
 def eliminate(values):
+    """
+    Remove the value
+    """
 
     try: 
         
@@ -186,6 +216,8 @@ def eliminate(values):
         logger.error("eliminate(): Fatal error eliminating the value")      
 
 def only_choice(values):
+    """
+    """
 
     try: 
         for unit in unitlist:
@@ -194,12 +226,15 @@ def only_choice(values):
                 if len(dplaces) == 1:
                     # values[dplaces[0]] = digit
                     values = assign_value(values, dplaces[0], digit)
+
         return values
 
     except Exception as err:
-        logger.error("only_choice(): Fatal error running tests")       
+        logger.error("only_choice(): Fatal error only_choice")       
 
 def reduce_puzzle(values):
+    """
+    """
     stalled = False
     while not stalled:
         # Check how many boxes have a determined value
