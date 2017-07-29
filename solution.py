@@ -100,7 +100,6 @@ def find_twins(values):
     """
 
     try: 
-
         # Create a list of boxes with the boxes with two values (candidates for naked twins)
         _twins = [box for box in values.keys() if len(values[box]) == 2]
 
@@ -110,8 +109,49 @@ def find_twins(values):
         return naked_twins_list
     
     except Exception as err:
-        logger.error("find_twins(): Fatal error finding twins")      
 
+        logger.error("find_twins(): Fatal error finding naked-twins")
+
+
+def eliminate_twins(naked_twins_list, values): 
+
+    """Eliminate values using the naked twins strategy.
+    Args:
+        values(dict): a dictionary of the form {'box_name': '123456789', ...}
+        naked_twins (list): a list of lists containing each pair of naked twins. Example [[A1, B1], [D4, E5], [H4, C4]]
+
+    Returns:
+        values(dict): the values dictionary with the naked twins eliminated from peers.
+    """
+
+    try:
+
+        for i in range(len(naked_twins_list)):
+            box1 = naked_twins_list[i][0]  # From the previous example : box1 = naked_twins[0][0] --> A1
+            box2 = naked_twins_list[i][1]  # From the previous example : box1 = naked_twins[0][0] --> B1
+            
+            # Find peers for first and second twins
+            peers1 = set(peers[box1]) # Build a set (inmutable objects) of peers for A1
+            peers2 = set(peers[box2]) # Build a set of peers for B1
+
+            # Join the two sets 
+            common_peers = peers1 & peers2
+
+            # Remove the naked twins as candidates from the common peers
+            for peer in common_peers:
+                if len(values[peer]) >= 2:
+                    peers_over_1 = values[box1]
+
+                    for k in peers_over_1:
+                        values = assign_value(values, peer, values[peer].replace(k, ''))
+        return values
+
+
+
+    except Exception as err: 
+
+        logger.error("eliminate_twins(): Fatal error eliminating naked-twins")
+   
 
 def naked_twins(values):
     """Eliminate values using the naked twins strategy.
@@ -123,35 +163,10 @@ def naked_twins(values):
     """
 
     # Find all instances of naked twins
+    # Remove the naked-twins 
+  
 
-    naked_twins = find_twins(values)
-
-
-    # Eliminate the naked twins as possibilities for their peers
-
-   
-    for i in range(len(naked_twins)):
-        box1 = naked_twins[i][0]  # From the previous example : box1 = naked_twins[0][0] --> A1
-        box2 = naked_twins[i][1]  # From the previous example : box1 = naked_twins[0][0] --> B1
-        
-        # Find peers for first and second twins
-        peers1 = set(peers[box1]) # Build a set (inmutable objects) of peers for A1
-        peers2 = set(peers[box2]) # Build a set of peers for B1
-
-        # Join the two sets 
-        common_peers = peers1 & peers2
-
-        
-
-        
-        # Remove the naked twins as candidates from the common peers
-        for peer in common_peers:
-            if len(values[peer]) >= 2:
-                peers_over_1 = values[box1]
-
-                for k in peers_over_1:
-                    values = assign_value(values, peer, values[peer].replace(k, ''))
-    return values
+    return eliminate_twins(find_twins(values), values)
 
 
 def grid_values(grid):
