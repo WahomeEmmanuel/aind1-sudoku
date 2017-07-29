@@ -79,8 +79,8 @@ def assign_value(values, box, value):
         if len(value) == 1:
             assignments.append(values.copy())
 
-        logger.info(values)
-        logger.info('\n')    
+        #logger.info(values)
+        #logger.info('\n')    
 
         return values
 
@@ -90,8 +90,8 @@ def assign_value(values, box, value):
 
 
 
-def find_twins(values): 
-    """Eliminate values using the naked twins strategy.
+def find_naked_twins(values): 
+    """Find values using the naked twins strategy.
     Args:
         values(dict): a dictionary of the form {'box_name': '123456789', ...}
 
@@ -106,29 +106,31 @@ def find_twins(values):
         # Find the naked twins and create a list of lists
         naked_twins_list = [[box1, box2] for box1 in _twins for box2 in peers[box1] if set(values[box1]) == set(values[box2])]
 
+        logger.info("find_naked_twins(): naked_twins_list... " + str(naked_twins_list) + "\n")
+     
         return naked_twins_list
     
     except Exception as err:
 
-        logger.error("find_twins(): Fatal error finding naked-twins")
+        logger.error("find_naked_twins(): Fatal error finding naked-twins")
 
 
-def eliminate_twins(naked_twins_list, values): 
+def eliminate_twins(_twins_list, values): 
 
     """Eliminate values using the naked twins strategy.
     Args:
+        naked_twins (list): a list of lists containing each pair of hidden/naked twins. Example [[A1, B1], [D4, E5], [H4, C4]]
         values(dict): a dictionary of the form {'box_name': '123456789', ...}
-        naked_twins (list): a list of lists containing each pair of naked twins. Example [[A1, B1], [D4, E5], [H4, C4]]
-
+    
     Returns:
         values(dict): the values dictionary with the naked twins eliminated from peers.
     """
 
     try:
 
-        for i in range(len(naked_twins_list)):
-            box1 = naked_twins_list[i][0]  # From the previous example : box1 = naked_twins[0][0] --> A1
-            box2 = naked_twins_list[i][1]  # From the previous example : box1 = naked_twins[0][0] --> B1
+        for i in range(len(_twins_list)):
+            box1 = _twins_list[i][0]  # From the previous example : box1 = naked_twins[0][0] --> A1
+            box2 = _twins_list[i][1]  # From the previous example : box1 = naked_twins[0][0] --> B1
             
             # Find peers for first and second twins
             peers1 = set(peers[box1]) # Build a set (inmutable objects) of peers for A1
@@ -144,17 +146,19 @@ def eliminate_twins(naked_twins_list, values):
 
                     for k in peers_over_1:
                         values = assign_value(values, peer, values[peer].replace(k, ''))
+                        logger.info("eliminate_twins(): assigning..." + box1 + " in " + box2 + "\n")    
+                        logger.info(values)
         return values
 
 
 
     except Exception as err: 
 
-        logger.error("eliminate_twins(): Fatal error eliminating naked-twins")
+        logger.error("eliminate_twins(): Fatal error eliminating naked-twins \n")
    
 
 def naked_twins(values):
-    """Eliminate values using the naked twins strategy.
+    """Find & Eliminate values using the naked twins strategy.
     Args:
         values(dict): a dictionary of the form {'box_name': '123456789', ...}
 
@@ -165,8 +169,49 @@ def naked_twins(values):
     # Find all instances of naked twins
     # Remove the naked-twins 
   
+    return eliminate_twins(find_naked_twins(values), values)
 
-    return eliminate_twins(find_twins(values), values)
+
+def find_hidden_twins(values):
+    """ Find all instances of hidden twins
+    Args:
+        values(dict): a dictionary of the form {'box_name': '123456789', ...}
+
+    Returns:
+        the values dictionary with the hidden twins eliminated from peers.
+    """
+      
+    try: 
+        # Create a list of boxes with the boxes with two values (candidates for hidden twins)
+        _twins = [box for box in values.keys() if len(values[box]) == 2]
+
+        # Find the hidden twins and create a list of lists
+        # set(a).intersection(set(b)) == set(a)
+        hidden_twins_list = [[box1, box2] for box1 in _twins for box2 in peers[box1] if set(values[box1]).intersection(set(values[box2])) == set(values[box1])]
+
+        logger.info("find_hidden_twins(): hidden_twins_list... " + str(hidden_twins_list) + "\n")
+
+        return hidden_twins_list
+    
+    except Exception as err:
+
+        logger.error("find_hidden_twins(): Fatal error finding hidden-twins")
+
+
+def hidden_twins(values):
+    """Find & Eliminate values using the hidden twins strategy.
+    Args:
+        values(dict): a dictionary of the form {'box_name': '123456789', ...}
+
+    Returns:
+        the values dictionary with the hidden twins eliminated from peers.
+    """
+
+    # Find all instances of naked twins
+    # Remove the naked-twins 
+  
+    return eliminate_twins(find_hidden_twins(values), values)        
+    
 
 
 def grid_values(grid):
@@ -251,6 +296,8 @@ def reduce_puzzle(values):
     """
     """
     stalled = False
+    # auxlist = [] # for testing find_ methods
+
     while not stalled:
         # Check how many boxes have a determined value
         solved_values_before = len([box for box in values.keys() if len(values[box]) == 1])
@@ -263,6 +310,9 @@ def reduce_puzzle(values):
 
         # Use the Naked Twins Strategy
         values = naked_twins(values)
+
+        # Use the Hidden Twins Strategy
+        # values = hidden_twins(values)
         
         # Check how many boxes have a determined value, to compare
         solved_values_after = len([box for box in values.keys() if len(values[box]) == 1])
