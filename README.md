@@ -8,7 +8,7 @@
 
 In this project, we write code to implement two extensions of our Sudoku solver. The first one will be to implement the technique called "naked twins". The second one will be to modify our existing code to solve a diagonal sudoku. The goals are to implement the naked twins function and write an AI agent that will solve the Diagonal Sudoku game and experience constraint propagation in both implementations. 
 
-Some additional features have been added in this implementation. Although that was not requested for this project, some suggestions were made by the Udacity reviewer and they have been added as improvers: 
+Some additional features have been added in this implementation. Although that was not requested for this project, some suggestions were made by the Udacity reviewer and they have been added as improvements: 
 
 * Added quick testers [Effective assertions](https://wiki.python.org/moin/UsingAssertionsEffectively)
 * Added logging calls [Basic logging tutorial](https://docs.python.org/3/howto/logging.html)
