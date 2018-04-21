@@ -37,7 +37,7 @@ Number of peers of D4 (in diagonal):  26
 
 It would seem that we as our list is bigger and we have more boxes to check for peers, the performance might be slow, but it is not, as we are dramatically reducing the number of possibilities for each box, and so improving the performance of the algorithm. 
 
-Further documentation for this project can be found in this [resource](Solve_any_Sudoku_with_AI.ipynb) notes taken from [http://norvig.com/sudoku.html]. 
+**Further documentation for this project can be found in this [resource](Solve_any_Sudoku_with_AI.ipynb) notes taken from [http://norvig.com/sudoku.html]**
 
 ![Sudoku Screenshot][image1]
 
