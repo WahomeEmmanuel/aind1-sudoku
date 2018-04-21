@@ -17,6 +17,8 @@ Some additional features have been added in this implementation. Although that w
     * [Reference1](https://www.sudokuoftheday.com/techniques/hidden-pairs-triples/)
     * [Reference2](http://www.sudokudragon.com/tutorialhiddentwins.htm)
 
+Please note that the grid to solve is provided in the code itself within the `solution.py` file. 
+
 #### Question 1: Naked twins 
 
 Q: How do we use constraint propagation to solve the naked twins problem?  
