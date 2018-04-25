@@ -31,9 +31,9 @@ A: Making the unit list bigger by adding the diagonal we are increasing the numb
 
 Example: 
 
-Number of peers of A1 (in diagonal):  26
-Number of peers of B1 (not in diagonal):  20
-Number of peers of D4 (in diagonal):  26
+* Number of peers of A1 (in diagonal):  26
+* Number of peers of B1 (not in diagonal):  20
+* Number of peers of D4 (in diagonal):  26
 
 It would seem that we as our list is bigger and we have more boxes to check for peers, the performance might be slow, but it is not, as we are dramatically reducing the number of possibilities for each box, and so improving the performance of the algorithm. 
 
